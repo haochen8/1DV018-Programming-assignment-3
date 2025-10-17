@@ -21,7 +21,7 @@ public class HeapSort {
       return;
     buildMaxHeap(a, left, right);
     for (int end = right; end > left; end--) {
-      swap(a, left, end); // Move max to end
+      SortUtils.swap(a, left, end);
       siftDown(a, left, left, end - 1);
     }
   }
@@ -63,26 +63,13 @@ public class HeapSort {
         largest = r;
       if (largest == i)
         break;
-      swap(a, i, largest);
+      SortUtils.swap(a, i, largest);
       i = largest;
     }
   }
 
   private static int leftChild(int i, int left) {
     return (i - left) * 2 + 1 + left;
-  }
-
-  /**
-   * Exchanges the two elements at the provided positions.
-   *
-   * @param a the array whose elements should be swapped
-   * @param i the index of the first element
-   * @param j the index of the second element
-   */
-  private static void swap(Object[] a, int i, int j) {
-    Object temp = a[i];
-    a[i] = a[j];
-    a[j] = temp;
   }
 
 }
