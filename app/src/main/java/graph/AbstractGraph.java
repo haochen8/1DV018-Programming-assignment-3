@@ -57,6 +57,72 @@ public abstract class AbstractGraph implements Graph {
   }
 
   @Override
+  public Iterable<Integer> bfs(int start) {
+    checkNode(start);
+    List<Integer> order = new ArrayList<>();
+    boolean[] visited = new boolean[nodes];
+    Deque<Integer> queue = new ArrayDeque<>();
+    visited[start] = true;
+    queue.add(start);
+    while (!queue.isEmpty()) {
+      int current = queue.remove();
+      order.add(current);
+      for (Edge edge : adjList.get(current)) {
+        int neighbor = edge.to();
+        if (!visited[neighbor]) {
+          visited[neighbor] = true;
+          queue.add(neighbor);
+        }
+      }
+    }
+    return Collections.unmodifiableList(order);
+  }
+
+  @Override
+  public Iterable<Integer> dfs(int start) {
+    checkNode(start);
+    List<Integer> order = new ArrayList<>();
+    boolean[] visited = new boolean[nodes];
+    Deque<Integer> stack = new ArrayDeque<>();
+    stack.push(start);
+    visited[start] = true;
+    while (!stack.isEmpty()) {
+      int current = stack.pop();
+      order.add(current);
+      List<Edge> neighbors = adjList.get(current);
+      for (int i = neighbors.size() - 1; i >= 0; i--) {
+        int neighbor = neighbors.get(i).to();
+        if (!visited[neighbor]) {
+          visited[neighbor] = true;
+          stack.push(neighbor);
+        }
+      }
+    }
+    return Collections.unmodifiableList(order);
+  }
+
+  @Override
+  public boolean hasPath(int source, int target) {
+    checkNode(source);
+    checkNode(target);
+    if (source == target) {
+      return true;
+    }
+    return !findPath(source, target).isEmpty();
+  }
+
+  @Override
+  public Iterable<Integer> path(int source, int target) {
+    checkNode(source);
+    checkNode(target);
+    List<Integer> path = findPath(source, target);
+    if (path.isEmpty()) {
+      return List.of();
+    }
+    return Collections.unmodifiableList(path);
+  }
+
+  @Override
   public Iterable<Edge> edges() {
     return () -> new Iterator<Edge>() {
       private int bucketIndex = 0;
@@ -100,6 +166,52 @@ public abstract class AbstractGraph implements Graph {
     if (u < 0 || u >= nodes) {
       throw new IllegalArgumentException("Node " + u + " is out of bounds.");
     }
+  }
+
+  private List<Integer> findPath(int source, int target) {
+    if (source == target) {
+      return new ArrayList<>(List.of(source));
+    }
+
+    boolean[] visited = new boolean[nodes];
+    int[] parent = new int[nodes];
+    Arrays.fill(parent, -1);
+    Deque<Integer> queue = new ArrayDeque<>();
+
+    visited[source] = true;
+    queue.add(source);
+
+    while (!queue.isEmpty()) {
+      int current = queue.remove();
+      for (Edge edge : adjList.get(current)) {
+        int neighbor = edge.to();
+        if (!visited[neighbor]) {
+          visited[neighbor] = true;
+          parent[neighbor] = current;
+          if (neighbor == target) {
+            return buildPath(source, target, parent);
+          }
+          queue.add(neighbor);
+        }
+      }
+    }
+
+    return Collections.emptyList();
+  }
+
+  private List<Integer> buildPath(int source, int target, int[] parent) {
+    List<Integer> path = new ArrayList<>();
+    int current = target;
+    path.add(target);
+    while (current != source) {
+      current = parent[current];
+      if (current == -1) {
+        return Collections.emptyList();
+      }
+      path.add(current);
+    }
+    Collections.reverse(path);
+    return path;
   }
 
   protected void addAdjEdge(int u, int v, double weight) {

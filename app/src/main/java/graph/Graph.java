@@ -17,4 +17,10 @@ public interface Graph {
   Iterable<Integer> nodes();
   Iterable<Edge> edges();
   Iterable<Edge> adjacency(int u);
+
+  Iterable<Integer> bfs(int start);
+  Iterable<Integer> dfs(int start);
+
+  boolean hasPath(int source, int target);
+  Iterable<Integer> path(int source, int target);
 }
