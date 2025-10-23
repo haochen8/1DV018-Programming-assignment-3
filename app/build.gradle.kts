@@ -34,7 +34,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "sorting.Main"
+    mainClass = "main.Main"
 }
 
 tasks.named<Test>("test") {
