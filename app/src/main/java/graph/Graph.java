@@ -23,4 +23,7 @@ public interface Graph {
 
   boolean hasPath(int source, int target);
   Iterable<Integer> path(int source, int target);
+
+  double[] shortestDistances(int source);
+  Iterable<Integer> shortestPath(int source, int target);
 }

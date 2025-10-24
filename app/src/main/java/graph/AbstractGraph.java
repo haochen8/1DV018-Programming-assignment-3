@@ -121,6 +121,25 @@ public abstract class AbstractGraph implements Graph {
     }
     return Collections.unmodifiableList(path);
   }
+  
+  @Override
+  public double[] shortestDistances(int source) {
+    checkNode(source);
+    Dijkstra.Result result = Dijkstra.compute(this, source);
+    return result.distances().clone();
+  }
+
+  @Override
+  public Iterable<Integer> shortestPath(int source, int target) {
+    checkNode(source);
+    checkNode(target);
+    Dijkstra.Result result = Dijkstra.compute(this, source);
+    List<Integer> path = Dijkstra.reconstructPath(source, target, result);
+    if (path.isEmpty()) {
+      return List.of();
+    }
+    return Collections.unmodifiableList(path);
+  }
 
   @Override
   public Iterable<Edge> edges() {
